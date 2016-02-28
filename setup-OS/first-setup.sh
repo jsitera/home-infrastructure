@@ -44,4 +44,8 @@ apt-get install indicator-multiload
 # MYTHTV frontend
 
 # KODI
-
+add-apt-repository ppa:team-xbmc/ppa
+apt-get update
+apt-get install kodi
+wget http://kodi-czsk.github.io/repository/repo/repository.kodi-czsk/repository.kodi-czsk-1.0.2.zip
+# Nastavení -> Doplňky -> Instalovat doplněk ze zip archivu
