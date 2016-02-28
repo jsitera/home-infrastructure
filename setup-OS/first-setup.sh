@@ -9,6 +9,7 @@ apt-get install gnome-session-fallback
 
 # move buttons to the right side
 # gconf-editor
+gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize, close'
 
 # UFW firewall enable and setup
 
@@ -35,6 +36,7 @@ echo "//10.0.0.15/data /data cifs ro,user=denisa,passwd=${samba-passwd},iocharse
 # home directory backup
 
 # indicators to panel (weather)
+apt-get install indicator-multiload
 
 ######################### APPS ##################################
 
