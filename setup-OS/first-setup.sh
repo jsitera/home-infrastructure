@@ -28,6 +28,10 @@ echo "//10.0.0.15/data /data cifs ro,user=denisa,passwd=${samba-passwd},iocharse
 
 # enable HW drivers and HW acceleration (NVidia) VPAU
 
+# enable SSH server
+apt-get install openssh-server
+mkdir /root/.ssh
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAtnrEYWS5v54d3w4h5NWWqa9Hhn6kQA42Vg5Q7dym/KzvN4BCizEo1eLn/DP4io0uxKdaMKMfRmadGFB2C+f1fUS3EqCyVmdgFjkMix24/mXPQVMx/XsT4cNwadaNAvcBtJA7bCXGl6Ko5+6yZVdQ5OhHRnckXUJHBOzM78oa2Dk=" > /root/.ssh/authorized_keys
 
 
 
