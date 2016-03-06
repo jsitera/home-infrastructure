@@ -40,6 +40,13 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAtnrEYWS5v54d3w4h5NWWqa9Hhn6kQA42Vg5Q7d
 
 # home directory backup
 
+# chrome browser
+echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
+http://dl.google.com/linux/chrome/deb/ stable main
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+apt-get update
+apt-get install google-chrome-stable
+
 # indicators to panel (weather)
 apt-get install indicator-multiload
 
