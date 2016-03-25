@@ -13,6 +13,9 @@ apt-get install gnome-session-fallback
 gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close'
 
 # UFW firewall enable and setup
+ufw allow from 10.0.0.0/24 to any port 22
+ufw enable
+ufw status
 
 # configure screensaver - no password for unlock
 #                       - no autolock
@@ -24,7 +27,7 @@ gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize
 
 # setup samba mountpoint - only clients
 
-echo "//10.0.0.15/data /data cifs ro,user=denisa,passwd=${samba-passwd},iocharset=utf8 0 0" >> /etc/fstab
+echo "//10.0.0.15/data /data cifs ro,user=denisa,password=${samba-passwd},iocharset=utf8 0 0" >> /etc/fstab
 
 # enable HW drivers and HW acceleration (NVidia) VPAU
 
@@ -40,6 +43,11 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAtnrEYWS5v54d3w4h5NWWqa9Hhn6kQA42Vg5Q7d
 
 # home directory backup
 
+# sensors
+apt-get install lm-sensors hddtemp
+sensors-detect
+# sensors hddtemp
+
 # chrome browser
 echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
 http://dl.google.com/linux/chrome/deb/ stable main
@@ -53,6 +61,9 @@ apt-get install indicator-multiload
 ######################### APPS ##################################
 
 # MYTHTV frontend
+apt-get install mythbuntu-control-centre
+# start control centre and setup mythbuntu updates repository and its version
+apt-get install mythtv-frontend
 
 # KODI
 add-apt-repository ppa:team-xbmc/ppa
