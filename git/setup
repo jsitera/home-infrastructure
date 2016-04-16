@@ -1,0 +1,4 @@
+apt-get install git
+git config --global user.email "sitera@civ.zcu.cz"
+git config --global user.name "Jiri Sitera"
+git clone https://github.com/jsitera/home-infrastructure.git
