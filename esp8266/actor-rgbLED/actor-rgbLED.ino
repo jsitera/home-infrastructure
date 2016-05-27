@@ -23,9 +23,9 @@
 #define RGB_topic "/PI1/RGB/Color"
 
 // =============== configuration of RGB LED ==============================
-#define redPIN 12
-#define greenPIN 14
-#define bluePIN 16
+#define redPin 12
+#define greenPin 13
+#define bluePin 14
 
 // ===================== config end ==========================================
 
@@ -41,6 +41,11 @@ PubSubClient client(espClient);
 
 void setup() {
   Serial.begin(115200);
+
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+ 
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
@@ -85,11 +90,12 @@ void reconnect() {
   }
 }
 
-// callback called when MQTT message arrives
+// callback called when MQTT message arrives / see setCallback()
 void callback(char* topic, byte* payload, unsigned int length) {
 
   payload[length] = '\0';
   String s_payload = String((char *)payload);
+  String s_topic = String((char *)topic);
 
   Serial.print("MQTT message arrived, topic:");
   Serial.print(topic);
@@ -97,23 +103,27 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println(s_payload);
  
 
-  if(topic == RGB_topic){
+  if (s_topic == RGB_topic){
     //topic from OpenHAB is in a form of r;g;b where the individual color 
     //values are 0-100
+    //output is inverse - RGB LED example
     int c1 = s_payload.indexOf(';');
     int c2 = s_payload.indexOf(';',c1+1);
-    int red = map(s_payload.toInt(),0,100,0,255);
-    int green = map(s_payload.substring(c1+1,c2).toInt(),0,100,0,255);
-    int blue = map(s_payload.substring(c2+1).toInt(),0,100,0,255);  
+    int red = map(s_payload.toInt(),0,100,PWMRANGE,0);
+    int green = map(s_payload.substring(c1+1,c2).toInt(),0,100,PWMRANGE,0);
+    int blue = map(s_payload.substring(c2+1).toInt(),0,100,PWMRANGE,0);  
  
-   analogWrite(redPIN, red);
-   analogWrite(greenPIN, green);
-   analogWrite(bluePIN, blue);
+    analogWrite(redPin, red);
+    analogWrite(greenPin, green);
+    analogWrite(bluePin, blue);
 
-   Serial.print("RGB values written to pins: ");
-   Serial.print(red);
-   Serial.print(green);
-   Serial.println(blue);
+    Serial.print("RGB values written to pins: ");
+    Serial.print(red);
+    Serial.print(";");
+    Serial.print(green);
+    Serial.print(";");
+    Serial.println(blue);
+    Serial.flush();
  }
  
 }
