@@ -36,9 +36,10 @@ void setup() {
   Serial.begin(115200);
 
   // sanity check delay - allows reprogramming if accidently blowing power w/leds
-  delay(2000);
+  delay(1000);
 
-  FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
+  //FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS).setCorrection( TypicalSMD5050 );
 
   for(int i = 0; i < NUM_LEDS; i = i + 1) {
     leds[i] = CRGB::Black;
