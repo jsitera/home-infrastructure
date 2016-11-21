@@ -1,0 +1,24 @@
+import org.openhab.core.library.types.*
+
+var HSBType hsbValue
+var int redValue
+var int greenValue
+var int blueValue
+var String RGBvalues
+
+rule "SUN - HSB-RGB transform"
+ when
+ Item SUN_HSB changed
+ then
+ hsbValue = SUN_HSB.state as HSBType
+
+ redValue = hsbValue.red.intValue
+ greenValue = hsbValue.green.intValue
+ blueValue = hsbValue.blue.intValue
+
+
+ RGBvalues= redValue.toString + ";" + greenValue.toString + ";" + blueValue.toString
+ sendCommand( SUN_RGB_String, RGBvalues )
+
+ logInfo( "SUN_RGB_String", RGBvalues )
+end

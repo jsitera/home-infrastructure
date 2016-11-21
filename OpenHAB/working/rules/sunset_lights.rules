@@ -1,0 +1,116 @@
+// SUN (the ceiling light in the shape of the Sun capable of RGB setup)
+// rules controls automatic ON/OFF of lights
+// start/stop based on dark outside and on preset times 
+
+import org.openhab.core.library.types.*
+import org.joda.time.*
+import org.openhab.model.script.actions.Timer
+
+rule "SUN init"
+when
+  System started
+then
+  SUN_ON.postUpdate(OFF)
+  // presets for settings of ON OFF times
+  SUNOnWeekHours.postUpdate(6)
+  postUpdate(SUNOnWeekMinutes, 00) 
+  postUpdate(SUNOffWeekHours,  7)
+  postUpdate(SUNOffWeekMinutes, 00) 
+  postUpdate(SUNOnWeekEndHours,  6)
+  postUpdate(SUNOnWeekEndMinutes, 00) 
+  postUpdate(SUNOffWeekEndHours,  7)
+  postUpdate(SUNOffWeekEndMinutes, 00) 
+end
+
+// each minute we run update (optimize with use of timers?, how implement frequent changes (dimming)?)
+rule "SUN: update state"
+when
+  Time cron "/10 * * * * ?"
+then
+  // everything in minutes of day (doesn't work over midnight)
+  
+  // actual time in the day in minutes from midnight
+  var int actMinutes = now.getMinuteOfDay()
+
+  // scheduled times for lights
+  var int OnMinutes1 = (SUNOnWeekHours.state as DecimalType).intValue() * 60 + (SUNOnWeekMinutes.state as DecimalType).intValue()
+  var int OffMinutes1 = (SUNOffWeekHours.state as DecimalType).intValue() * 60 + (SUNOffWeekMinutes.state as DecimalType).intValue()
+
+
+  // times describing the times when no light is needed - between dawnStart and duskEnd
+  var DateTime duskEndDT = new DateTime((duskEnd.state as DateTimeType).calendar.timeInMillis)
+  var int duskEndMin = duskEndDT.getMinuteOfDay()
+  var DateTime dawnStartDT = new DateTime((dawnStart.state as DateTimeType).calendar.timeInMillis)
+  var int dawnStartMin = dawnStartDT.getMinuteOfDay()
+  
+  logDebug("SUN_rules", "Minutes: now {}, duskEnd {} dawnStart {} ON1 {} OFF1 {}", actMinutes, duskEndMin, dawnStartMin, OnMinutes1, OffMinutes1)
+
+
+  // derive desired state of lights
+  var boolean desiredState = false
+  // should be on (on/off times)?
+  if (actMinutes > OnMinutes1 && actMinutes < OffMinutes1) {
+    // is dark (dawn/dusk times)?
+    if (actMinutes < dawnStartMin || actMinutes > duskEndMin) {
+      desiredState = true
+    }
+  }
+
+
+  // change state if needed
+  if (SUN_ON.state == ON && !desiredState) {
+     SUN_ON.sendCommand(OFF)
+  }
+  if (SUN_ON.state == OFF && desiredState) {
+     SUN_ON.sendCommand(ON)
+  }
+
+
+  logDebug("SUN_rules", "DesiredState {} SUN_ON {}", desiredState, SUN_ON)
+end
+
+// primary SUN state is in HSB color item, we transform it to the RGB string to send to
+// the light controller on each change
+
+rule "SUN - action by rules ON"
+when
+  Item SUN_ON changed to ON
+then
+  logDebug("SUN_rules", "SUN_ON changed to ON")
+  //https://www.reddit.com/r/huelights/comments/3g32cg/openhab_script_to_create_your_own_sunrise/
+  
+  var int hue = 0 //0-360; 0=red, 120=green, 240=blue, 360=red(again)
+  var int sat = 100 //0-100
+  var int bright = 20  //0-100
+
+
+  //hue from 0 to 60, sat from 100 to 0, brightness from 20 to 90
+  var Timer timer
+  var DecimalType hueV
+  var PercentType satV
+  var PercentType brightV
+  var HSBType hsbValue
+  var int i = 1
+  while(bright <= 90) {
+    hueV = new DecimalType(hue)
+    satV = new PercentType(sat)
+    brightV = new PercentType(bright)
+    hsbValue = new HSBType(hueV, satV, brightV)
+    timer = createTimer(now.plusMinutes(i)) [|
+      SUN_HSB.postUpdate(hsbValue)
+    ]
+    hue = hue + 6
+    sat = sat - 10
+    bright = bright + 7
+    i = i + 1
+  }
+    //SUN_HSB.postUpdate(HSBType::WHITE) 
+end
+
+rule "SUN - action by rules OFF"
+when
+  Item SUN_ON changed to OFF
+then
+  logDebug("SUN_rules", "SUN_ON changed to OFF")
+  SUN_HSB.postUpdate(HSBType::BLACK) 
+end

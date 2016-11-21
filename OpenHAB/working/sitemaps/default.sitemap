@@ -1,0 +1,41 @@
+sitemap demo label="Testovací stránka"
+{
+        Frame {
+		Switch item=Wemo_Switch_1
+		Text item=PI1_temperature
+		Text item=PI1_humidity
+		Text item=Sunset_lights_on
+		Text item=Sunset_lights_off
+		Text item=dawnStart
+		Text item=duskEnd
+		Text item=Date
+	}
+	Frame label="RGB" {
+		Colorpicker item=fWIFI_RGB icon="slider"
+		//Switch item=WIFI_RGB_Switch1 label="switch"
+	}
+        Frame label="SUN - manual usage" {
+                Colorpicker item=SUN_HSB icon="slider"
+        }
+	Frame label="Settings" {
+	      Text label="SUN - settings" {
+	      	     Frame label="Weekdays ON time" {
+                         Setpoint item=SUNOnWeekHours minValue=0 maxValue=23 step=1
+                     	 Setpoint item=SUNOnWeekMinutes minValue=0 maxValue=55 step=5
+		     }
+		     Frame label="Weekdays OFF time" {
+                         Setpoint item=SUNOffWeekHours minValue=0 maxValue=23 step=1
+                         Setpoint item=SUNOffWeekMinutes minValue=0 maxValue=55 step=5
+	             }
+	             Frame label="Weekend ON time" {
+                         Setpoint item=SUNOnWeekEndHours minValue=0 maxValue=23 step=1
+                         Setpoint item=SUNOnWeekEndMinutes minValue=0 maxValue=55 step=5
+		     }
+	             Frame label="Weekend OFF time" {
+                         Setpoint item=SUNOffWeekEndHours minValue=0 maxValue=23 step=1
+                         Setpoint item=SUNOffWeekEndMinutes minValue=0 maxValue=55 step=5
+		     }
+              }
+	}
+}
+

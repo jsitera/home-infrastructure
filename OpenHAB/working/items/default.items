@@ -1,0 +1,34 @@
+Group gRoom
+Number PI1_temperature "Temperature [%.1f]" <temperature> {mqtt="<[japiMQTT:PI1/temperature:state:default]"}
+Number PI1_humidity "Humidity [%.1f]" <humidity> {mqtt="<[japiMQTT:PI1/humidity:state:default]"}
+Switch Wemo_Switch_1      {wemo="Socket-1_0-221609K1100841"}
+DateTime  Sunset_lights_on "Sunset lights on today: [%1$ta %1$tR]"
+DateTime  Sunset_lights_off "Sunset lights off today: [%1$ta %1$tR]"
+DateTime dawnStart "dawn start [%1$tH:%1$tM]" {astro="planet=sun,type=civilDawn,property=start"}
+DateTime duskEnd   "dusk end [%1$tH:%1$tM]"   {astro="planet=sun,type=civilDusk,property=end"}
+DateTime    Date    "Date [%1$tA, %1$td.%1$tm.%1$tY]"   (Status)    { ntp="" }
+// WiFi RGB 
+Group WIFI_RGB "WiFi RGB" (All)
+Color fWIFI_RGB "RGB" <slider> (WIFI_RGB)
+String WIFI_RGB_RGB (WIFI_RGB) {mqtt=">[japiMQTT:/PI1/RGB/Color:command:*:default]"}
+Switch WIFI_RGB_Switch1 "W1" (WIFI_RGB) {mqtt=">[japiMQTT:/PI1/RGB/SW1:command:ON:100],>[japiMQTT:/PI1/RGB/SW1:command:OFF:0]"}
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// SUN
+// 
+Group gSUN "SUN" (All)
+// HSB color - master SUN status variable, it is changed by GUI via slider or by rules
+Color SUN_HSB "SUN color" <slider> (gSUN)
+// String with RGB values to send to the SUN controller via MQTT / updated via rules
+// based on SUN_HSB
+String SUN_RGB_String (gSUN) {mqtt=">[japiMQTT:/SUN/RGB/Color:command:*:default]"}
+// rules status item - is currently ON?
+Switch SUN_ON (gSUN)
+// settings
+Number SUNOnWeekHours        "Hours [%d]"        <clock> (gSUN)
+Number SUNOnWeekMinutes      "Minutes [%d]"      <clock> (gSUN)
+Number SUNOffWeekHours        "Hours [%d]"        <clock> (gSUN)
+Number SUNOffWeekMinutes      "Minutes [%d]"      <clock> (gSUN)
+Number SUNOnWeekEndHours     "Hours [%d]"        <clock> (gSUN)
+Number SUNOnWeekEndMinutes   "Minutes [%d]"      <clock> (gSUN)
+Number SUNOffWeekEndHours     "Hours [%d]"        <clock> (gSUN)
+Number SUNOffWeekEndMinutes   "Minutes [%d]"      <clock> (gSUN)
